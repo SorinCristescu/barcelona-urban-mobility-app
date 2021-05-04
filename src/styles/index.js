@@ -8,7 +8,6 @@ body {
   margin: 0;
   font-family: Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background-color: whitesmoke;
 }
 
 a {
@@ -42,10 +41,28 @@ export const device = {
   desktopL: `(min-width: ${size.desktop})`,
 };
 
-export const theme = {
-  colors: {
-    primary: '#0070f3',
+export const lightTheme = {
+  bg: {
+    primary: '#F2F2F2',
+    secondary: '#C4C4C4',
   },
+  text: {
+    primary: '#333333',
+    secondary: '#4B4B4B',
+  },
+  // ...
+};
+
+export const darkTheme = {
+  bg: {
+    primary: '#333333',
+    secondary: '#4B4B4B',
+  },
+  text: {
+    primary: '#F2F2F2',
+    secondary: '#C4C4C4',
+  },
+  // ...
 };
 
 export const Container = styled.div`
@@ -54,6 +71,8 @@ export const Container = styled.div`
   padding: 0 6rem;
   height: 100vh;
   overflow: hidden;
+  background-color: ${(props) =>
+    props.darkModeActive ? lightTheme.bg.primary : darkTheme.bg.primary};
 
   @media ${device.mobileS} {
     padding: 0 1rem;
@@ -74,3 +93,25 @@ export const Container = styled.div`
     padding: 0 14rem;
   }
 `;
+
+export const P = styled.p`
+  font-weight: 200;
+  font-size: 18px;
+  line-height: 21px;
+  padding: 0;
+  margin: 0;
+  color: ${(props) =>
+    props.darkModeActive ? lightTheme.text.primary : darkTheme.text.primary};
+`;
+
+export const H5 = styled.h5`
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 21px;
+  padding: 0;
+  margin: 0;
+  color: ${(props) =>
+    props.darkModeActive ? lightTheme.text.primary : darkTheme.text.primary};
+`;
+
+export const H6 = styled.h6``;

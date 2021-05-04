@@ -1,9 +1,11 @@
 import Header from '../Header';
 import { Container } from '../../styles';
+import { useDarkMode } from 'next-dark-mode';
 
-function Layout({ children }) {
+function Layout({ children, themeToggler, theme }) {
+  const { darkModeActive } = useDarkMode();
   return (
-    <Container>
+    <Container darkModeActive={darkModeActive}>
       <Header />
       {children}
     </Container>
