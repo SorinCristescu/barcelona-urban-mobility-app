@@ -15,19 +15,20 @@ export const Container = styled.li`
   justify-content: space-between;
 
   &:hover {
-    background-color: #e5e5e5;
+    background-color: ${(props) =>
+      props.darkModeActive ? lightTheme.bg.secondary : darkTheme.bg.secondary};
   }
   p {
     font-size: 12px;
     font-weight: 100;
-    color: #333333;
+    color: ${(props) =>
+      props.darkModeActive ? darkTheme.bg.primary : lightTheme.bg.primary};
   }
 
   h5 {
     margin-left: 10px;
     font-size: 14px;
-    /* color: ${(props) => props.color}; */
-    color: #333333;
+    color: ${(props) => props.color};
   }
 
   .title {

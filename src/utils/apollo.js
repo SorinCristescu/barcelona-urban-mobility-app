@@ -4,6 +4,8 @@ import { concatPagination } from '@apollo/client/utilities';
 import merge from 'deepmerge';
 import isEqual from 'lodash/isEqual';
 
+export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__';
+
 let apolloClient;
 
 function createApolloClient() {
@@ -11,13 +13,13 @@ function createApolloClient() {
     ssrMode: typeof window === 'undefined',
     link: new HttpLink({
       uri: 'https://barcelona-urban-mobility-graphql-api.netlify.app/graphql', // Server URL (must be absolute)
-      //   credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
+      credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
     }),
     cache: new InMemoryCache({
       typePolicies: {
         Query: {
           fields: {
-            allMetroLines: concatPagination(),
+            allPosts: concatPagination(),
           },
         },
       },
@@ -29,7 +31,7 @@ export function initializeApollo(initialState = null) {
   const _apolloClient = apolloClient ?? createApolloClient();
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
-  // get hydrated here
+  // gets hydrated here
   if (initialState) {
     // Get existing cache, loaded during client side data fetching
     const existingCache = _apolloClient.extract();
@@ -56,7 +58,16 @@ export function initializeApollo(initialState = null) {
   return _apolloClient;
 }
 
-export function useApollo(initialState) {
-  const store = useMemo(() => initializeApollo(initialState), [initialState]);
+export function addApolloState(client, pageProps) {
+  if (pageProps?.props) {
+    pageProps.props[APOLLO_STATE_PROP_NAME] = client.cache.extract();
+  }
+
+  return pageProps;
+}
+
+export function useApollo(pageProps) {
+  const state = pageProps[APOLLO_STATE_PROP_NAME];
+  const store = useMemo(() => initializeApollo(state), [state]);
   return store;
 }

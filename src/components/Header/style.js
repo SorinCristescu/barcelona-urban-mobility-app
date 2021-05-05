@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { device } from '../../styles';
 
 export const Container = styled.header`
   width: 100%;
@@ -37,6 +38,25 @@ export const Logo = styled.div`
       line-height: 21px;
       padding: 0;
       margin: 0;
+    }
+
+    @media ${device.mobileS} {
+      display: none;
+    }
+    @media ${device.mobileM} {
+      display: none;
+    }
+    @media ${device.mobileL} {
+      display: none;
+    }
+    @media ${device.laptop} {
+      display: flex;
+    }
+    @media ${device.laptopL} {
+      display: flex;
+    }
+    @media ${device.desktop} {
+      display: flex;
     }
   }
 `;

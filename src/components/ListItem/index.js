@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useDarkMode } from 'next-dark-mode';
 import { Container } from './style';
-import { H5 } from '../../styles';
 
 function ListItem({ item }) {
   const { darkModeActive } = useDarkMode();
@@ -48,9 +47,7 @@ function ListItem({ item }) {
                 </defs>
               </svg>
             ) : null}
-
-            {/* <p>{item.type}</p> */}
-            <H5 darkModeActive={darkModeActive}>{item.name}</H5>
+            <h5>{item.name}</h5>
           </div>
         </a>
       </Link>

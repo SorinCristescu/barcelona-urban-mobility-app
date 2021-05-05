@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
-import PageHead from '../../components/PageHead';
-import styled from 'styled-components';
 import { useDarkMode } from 'next-dark-mode';
-import { lightTheme, darkTheme } from '../../styles';
+import { lightTheme, darkTheme } from '../../../styles';
 import { useQuery, gql } from '@apollo/client';
-import { initializeApollo, addApolloState } from '../../utils/apollo';
-// import { LINE_QUERY } from '../../utils/graphql';
-import Map from '../../components/Map';
+import { initializeApollo, addApolloState } from '../../../utils/apollo';
+// import { LINE_QUERY } from '../../../utils/graphql';
 import { useRouter } from 'next/router';
-import { device } from '../../styles';
-import List from '../../components/List';
+import { device } from '../../../styles';
+
+// Components
+import Map from '../../components/Map';
+import PageHead from '../../../components/PageHead';
+import styled from 'styled-components';
 
 const Main = styled.div`
   width: 100%;
@@ -75,7 +76,7 @@ const Main = styled.div`
   }
 `;
 
-function Line(props) {
+function Station(props) {
   const router = useRouter();
   const { id } = router.query;
 
@@ -98,9 +99,8 @@ function Line(props) {
       <PageHead />
       <Main>
         <div className="details">
-          <h4>Line name</h4>
-          <h6>Stations:</h6>
-          <List />
+          <h4>Station name</h4>
+          <h5>Lines:</h5>
         </div>
         <div className="map">
           <Map markers={[]} />
@@ -110,7 +110,7 @@ function Line(props) {
   );
 }
 
-export default Line;
+export default Station;
 
 export async function getServerSideProps(contex) {
   const apolloClient = initializeApollo();

@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PageHead from '../components/PageHead';
 import SearchBar from '../components/SearchBar';
 import styled from 'styled-components';
 import { useDarkMode } from 'next-dark-mode';
 import { lightTheme, darkTheme } from '../styles';
-import { sort } from '../utils';
-import { gql, useQuery, NetworkStatus } from '@apollo/client';
-import { initializeApollo } from '../utils/apollo';
+import { asc, dsc } from '../utils';
+import { useQuery } from '@apollo/client';
+import { initializeApollo, addApolloState } from '../utils/apollo';
 import { ALL_LINES_QUERY } from '../utils/graphql';
 import List from '../components/List';
 
@@ -43,7 +43,6 @@ export default function Home() {
   const { loading, error, data, fetchMore, networkStatus } = useQuery(
     ALL_LINES_QUERY,
     {
-      //   variables: allMetroLinesQueryVars,
       // Setting this value to true will make the component rerender when
       // the "networkStatus" changes, so we are able to know if it is fetching
       // more data
@@ -51,16 +50,6 @@ export default function Home() {
     }
   );
   const { darkModeActive } = useDarkMode();
-  const [sorted, setSorted] = useState('asc');
-  const toggleSort = () => {
-    if (sorted === 'asc') {
-      // setFiltered(sort(filtered));
-      setSorted('dsc');
-    } else {
-      // setFiltered(sort(filtered));
-      setSorted('asc');
-    }
-  };
 
   const metroLines = data.metroLines.edges.map((item) => {
     return {
@@ -70,16 +59,54 @@ export default function Home() {
       type: item.node.__typename,
     };
   });
+  const busLines = data.busLines.edges.map((item) => {
+    return {
+      id: item.node.id,
+      name: item.node.name,
+      color: `#${item.node.color}`,
+      type: item.node.__typename,
+    };
+  });
+  const lines = busLines.concat(metroLines);
+  const [sortedMethod, setSortedMethod] = useState('asc');
+  const [filtered, setFiltered] = useState(lines);
+  const [searchParam, setSearchParam] = useState('');
 
-  console.log('home', data);
+  const toggleSort = () => {
+    if (sortedMethod === 'asc') {
+      setSortedMethod('dsc');
+    } else {
+      setSortedMethod('asc');
+    }
+  };
+
+  useEffect(() => {
+    if (sortedMethod === 'asc') {
+      setFiltered(
+        filtered
+          .sort(asc)
+          .filter((item) =>
+            item.name.toLowerCase().includes(searchParam.toLowerCase())
+          )
+      );
+    } else if (sortedMethod === 'dsc') {
+      setFiltered(
+        filtered
+          .sort(dsc)
+          .filter((item) =>
+            item.name.toLowerCase().includes(searchParam.toLowerCase())
+          )
+      );
+    }
+  }, [searchParam, sortedMethod]);
+
   return (
     <div>
       <PageHead title="TMB - Home" description="" keywords="" />
-
       <Main>
         <div className="search">
           <SortButton darkModeActive={darkModeActive} onClick={toggleSort}>
-            {sorted === 'asc' ? (
+            {sortedMethod === 'asc' ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -114,11 +141,11 @@ export default function Home() {
             )}
           </SortButton>
           <SearchBar
-            // onChange={handleSearch}
+            onChange={(e) => setSearchParam(e.target.value)}
             placeholder="Search for line or station"
           />
         </div>
-        <List data={metroLines} />
+        <List data={filtered} />
       </Main>
     </div>
   );
@@ -129,13 +156,10 @@ export async function getStaticProps() {
 
   await apolloClient.query({
     query: ALL_LINES_QUERY,
-    // variables: allMetroLinesQueryVars,
   });
 
-  return {
-    props: {
-      initialApolloState: apolloClient.cache.extract(),
-    },
+  return addApolloState(apolloClient, {
+    props: {},
     revalidate: 1,
-  };
+  });
 }

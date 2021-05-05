@@ -44,11 +44,11 @@ export const device = {
 export const lightTheme = {
   bg: {
     primary: '#F2F2F2',
-    secondary: '#C4C4C4',
+    secondary: '#DEDEDE',
   },
   text: {
     primary: '#333333',
-    secondary: '#4B4B4B',
+    secondary: '#393939',
   },
   // ...
 };
