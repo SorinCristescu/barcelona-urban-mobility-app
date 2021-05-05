@@ -1,39 +1,59 @@
 import { gql } from '@apollo/client';
 
 export const GET_BUS_LINE_BY_ID_QUERY = gql`
-  query Line {
-    metroLine: metroLine(findBy: { id: $id }) {
-      ... on MetroLine {
+  query BusLine {
+    busLine: busLine(findBy: { id: $id }) {
+      ... on BusLine {
         id
-        originStation {
-          coordinates {
-            latitude
-            longitude
+        originStop {
+          location {
+            address
+            street
+            city
+            district
+            coordinates {
+              latitude
+              longitude
+            }
           }
-          lines
+          id
+          name
         }
-        endingStation {
-          coordinates {
-            latitude
-            longitude
+        endingStop {
+          location {
+            address
+            street
+            city
+            district
+            coordinates {
+              latitude
+              longitude
+            }
           }
-          lines
+          id
+          name
         }
-        name
-        color
-        stations {
+        stops {
           edges {
             node {
-              name
               id
-              coordinates {
-                latitude
-                longitude
+              name
+              location {
+                address
+                street
+                city
+                district
+                coordinates {
+                  latitude
+                  longitude
+                }
               }
-              lines
             }
           }
         }
+        color
+
+        name
       }
     }
   }

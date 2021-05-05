@@ -26,7 +26,7 @@ const geolocateControlStyle = {
   bottom: 100,
 };
 
-function Map({ markers, id }) {
+function Map({ markers }) {
   const { darkModeActive } = useDarkMode();
   const [viewport, setViewport] = useState({
     latitude: 41.397236,
@@ -133,12 +133,6 @@ function Map({ markers, id }) {
                 {selectedMarker.lines.map((line, index) => (
                   <p key={index}>{line}</p>
                 ))}
-                {/* <Link href={`/line/${id}/station/${selectedMarker.id}`}>
-                  <a>
-                    More details{' '}
-                    <img src="/icons/arrow right.svg" alt="arrow icon" />
-                  </a>
-                </Link> */}
               </div>
             </div>
           </Popup>

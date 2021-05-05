@@ -1,17 +1,15 @@
 import { useRouter } from 'next/router';
 import { useDarkMode } from 'next-dark-mode';
 
-import { useQuery } from '@apollo/client';
+import { useQuery, gql } from '@apollo/client';
 import { initializeApollo } from '../../utils/apollo';
-import { GET_BUS_LINE_BY_ID_QUERY } from '../../utils/queries/getBusLineById';
-import { GET_METRO_LINE_BY_ID_QUERY } from '../../utils/queries/getMetroLineById';
+import { GET_BUS_STATION_BY_ID_QUERY } from '../../utils/queries/getBusStationById';
+import { GET_METRO_STATION_BY_ID_QUERY } from '../../utils/queries/getMetroStationById';
 
 import Map from '../../components/Map';
 import PageHead from '../../components/PageHead';
-import List from '../../components/List';
-
-import styled from 'styled-components';
 import { device, H5 } from '../../styles';
+import styled from 'styled-components';
 
 const Main = styled.div`
   width: 100%;
@@ -84,61 +82,63 @@ const Main = styled.div`
   }
 `;
 
-function Line() {
+function Station() {
   const { darkModeActive } = useDarkMode();
   const router = useRouter();
   const id = parseInt(router.query.id);
   console.log('pathname', router.pathname);
-  const { loading, data } = useQuery(GET_METRO_LINE_BY_ID_QUERY, {
+  const { loading, data } = useQuery(GET_METRO_STATION_BY_ID_QUERY, {
     variables: {
       id: id,
     },
   });
 
-  console.log('line', data);
+  console.log('station', data);
 
-  const markers = data.metroLine.stations.edges.map((marker) => {
-    return {
-      color: `#${data.metroLine.color}`,
-      name: marker.node.name,
-      coordinates: {
-        latitude: marker.node.coordinates.latitude,
-        longitude: marker.node.coordinates.longitude,
-      },
-      lines: marker.node.lines,
-      id: marker.node.id,
-      type: marker.node.__typename,
-    };
-  });
+  // const markers = data.metroLine.stations.edges.map((marker) => {
+  //   return {
+  //     color: `#${data.metroLine.color}`,
+  //     name: marker.node.name,
+  //     coordinates: {
+  //       latitude: marker.node.coordinates.latitude,
+  //       longitude: marker.node.coordinates.longitude,
+  //     },
+  //     lines: marker.node.lines,
+  //     id: marker.node.id,
+  //     type: marker.node.__typename,
+  //   };
+  // });
 
   if (loading) return <h5>Loading...</h5>;
 
   return (
     <div>
       <PageHead />
-      <Main color={`#${data.metroLine.color}`}>
+      <Main
+      // color={`#${data.metroLine.color}`}
+      >
         <div className="details">
-          <H5 darkModeActive={darkModeActive}>Metro Line:</H5>
+          <H5 darkModeActive={darkModeActive}>Metro Station:</H5>
           <h2>{data.metroLine.name}</h2>
-          <H5 darkModeActive={darkModeActive}>Stations:</H5>
-          <List data={markers} />
+          <H5 darkModeActive={darkModeActive}>Lines connection:</H5>
+          {/* <List data={markers} /> */}
         </div>
         <div className="map">
-          <Map markers={markers} id={id} />
+          <Map markers={markers} />
         </div>
       </Main>
     </div>
   );
 }
 
-export default Line;
+export default Station;
 
 export async function getServerSideProps({ query }) {
   const id = parseInt(query.id);
   const apolloClient = initializeApollo();
 
   await apolloClient.query({
-    query: GET_METRO_LINE_BY_ID_QUERY,
+    query: GET_METRO_STATION_BY_ID_QUERY,
     variables: {
       id: id,
     },

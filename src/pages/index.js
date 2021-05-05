@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import PageHead from '../components/PageHead';
 import SearchBar from '../components/SearchBar';
 import styled from 'styled-components';
@@ -40,8 +41,11 @@ const SortButton = styled.button`
 `;
 
 export default function Home() {
+  const router = useRouter();
   const { loading, data } = useQuery(GET_ALL_LINES_QUERY);
   const { darkModeActive } = useDarkMode();
+
+  console.log('router', router);
 
   const metroLines = data.metroLines.edges.map((item) => {
     return {
