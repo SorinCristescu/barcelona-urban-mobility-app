@@ -11,7 +11,7 @@ import Layout from '../components/Layout';
 
 function MyApp({ Component, pageProps, darkMode }) {
   const { darkModeActive } = darkMode;
-  const apolloClient = useApollo(pageProps);
+  const apolloClient = useApollo(pageProps.initialApolloState);
 
   return (
     <ApolloProvider client={apolloClient}>

@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import PageHead from '../../components/PageHead';
+import { H5 } from '../../styles';
 import styled from 'styled-components';
 import { useDarkMode } from 'next-dark-mode';
 import { lightTheme, darkTheme } from '../../styles';
 import { useQuery, gql } from '@apollo/client';
 import { initializeApollo, addApolloState } from '../../utils/apollo';
-// import { LINE_QUERY } from '../../utils/graphql';
+import { GET_BUS_LINE_BY_ID_QUERY } from '../../utils/queries/getBusLineById';
+import { GET_METRO_LINE_BY_ID_QUERY } from '../../utils/queries/getMetroLineById';
 import Map from '../../components/Map';
 import { useRouter } from 'next/router';
 import { device } from '../../styles';
@@ -15,15 +17,23 @@ const Main = styled.div`
   width: 100%;
   padding-top: 50px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
 
   .details {
+    padding: 20px;
     width: 50%;
     height: 100%;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+
+    h2 {
+      padding: 0;
+      margin: 10px 0 20px 0;
+      color: ${(props) => props.color};
+    }
     @media ${device.mobileS} {
       display: none;
     }
@@ -46,7 +56,6 @@ const Main = styled.div`
 
   .map {
     width: 50%;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,35 +84,47 @@ const Main = styled.div`
   }
 `;
 
-function Line(props) {
+function Line() {
+  const { darkModeActive } = useDarkMode();
   const router = useRouter();
-  const { id } = router.query;
+  const id = parseInt(router.query.id);
+  console.log('id', typeof id);
+  const { loading, data } = useQuery(GET_METRO_LINE_BY_ID_QUERY, {
+    variables: {
+      id: id,
+    },
+  });
 
-  //   const { loading, error, data, fetchMore, networkStatus } = useQuery(
-  //     LINE_QUERY,
-  //     {
-  //       //   variables: {
-  //       //     id,
-  //       //   },
-  //       // Setting this value to true will make the component rerender when
-  //       // the "networkStatus" changes, so we are able to know if it is fetching
-  //       // more data
-  //       notifyOnNetworkStatusChange: true,
-  //     }
-  //   );
+  console.log('line', data);
 
-  //   console.log('line', data);
+  const markers = data.metroLine.stations.edges.map((marker) => {
+    return {
+      color: `#${data.metroLine.color}`,
+      name: marker.node.name,
+      coordinates: {
+        latitude: marker.node.coordinates.latitude,
+        longitude: marker.node.coordinates.longitude,
+      },
+      lines: marker.node.lines,
+      id: marker.node.id,
+      type: marker.node.__typename,
+    };
+  });
+
+  if (loading) return <h5>Loading...</h5>;
+
   return (
     <div>
       <PageHead />
-      <Main>
+      <Main color={`#${data.metroLine.color}`}>
         <div className="details">
-          <h4>Line name</h4>
-          <h6>Stations:</h6>
-          <List />
+          <H5 darkModeActive={darkModeActive}>Metro Line:</H5>
+          <h2>{data.metroLine.name}</h2>
+          <H5 darkModeActive={darkModeActive}>Stations:</H5>
+          <List data={markers} />
         </div>
         <div className="map">
-          <Map markers={[]} />
+          <Map markers={markers} id={id} />
         </div>
       </Main>
     </div>
@@ -112,54 +133,20 @@ function Line(props) {
 
 export default Line;
 
-export async function getServerSideProps(contex) {
+export async function getServerSideProps({ query }) {
+  const id = parseInt(query.id);
   const apolloClient = initializeApollo();
-  console.log(contex);
-  //   const LINE_QUERY = gql`
-  //     query line {
-  //       metroLine: metroLine(findBy: { id: $id }) {
-  //         ... on MetroLine {
-  //           id
-  //           originStation {
-  //             coordinates {
-  //               latitude
-  //               longitude
-  //             }
-  //             lines
-  //           }
-  //           endingStation {
-  //             coordinates {
-  //               latitude
-  //               longitude
-  //             }
-  //             lines
-  //           }
-  //           name
-  //           color
-  //           stations {
-  //             edges {
-  //               node {
-  //                 name
-  //                 id
-  //                 coordinates {
-  //                   latitude
-  //                   longitude
-  //                 }
-  //                 lines
-  //               }
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   `;
-
-  //   await apolloClient.query({
-  //     query: LINE_QUERY,
-  //     variables: { id: contex.query.id },
-  //   });
-
-  return addApolloState(apolloClient, {
-    props: {},
+  console.log('id', typeof id);
+  await apolloClient.query({
+    query: GET_METRO_LINE_BY_ID_QUERY,
+    variables: {
+      id: id,
+    },
   });
+
+  return {
+    props: {
+      initialApolloState: apolloClient.cache.extract(),
+    },
+  };
 }

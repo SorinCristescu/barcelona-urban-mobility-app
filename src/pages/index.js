@@ -6,8 +6,8 @@ import { useDarkMode } from 'next-dark-mode';
 import { lightTheme, darkTheme } from '../styles';
 import { asc, dsc } from '../utils';
 import { useQuery } from '@apollo/client';
-import { initializeApollo, addApolloState } from '../utils/apollo';
-import { ALL_LINES_QUERY } from '../utils/graphql';
+import { initializeApollo } from '../utils/apollo';
+import { GET_ALL_LINES_QUERY } from '../utils/queries/getAllLines';
 import List from '../components/List';
 
 const Main = styled.div`
@@ -40,15 +40,7 @@ const SortButton = styled.button`
 `;
 
 export default function Home() {
-  const { loading, error, data, fetchMore, networkStatus } = useQuery(
-    ALL_LINES_QUERY,
-    {
-      // Setting this value to true will make the component rerender when
-      // the "networkStatus" changes, so we are able to know if it is fetching
-      // more data
-      notifyOnNetworkStatusChange: true,
-    }
-  );
+  const { loading, data } = useQuery(GET_ALL_LINES_QUERY);
   const { darkModeActive } = useDarkMode();
 
   const metroLines = data.metroLines.edges.map((item) => {
@@ -99,6 +91,8 @@ export default function Home() {
       );
     }
   }, [searchParam, sortedMethod]);
+
+  if (loading) return <h5>Loading...</h5>;
 
   return (
     <div>
@@ -155,11 +149,13 @@ export async function getStaticProps() {
   const apolloClient = initializeApollo();
 
   await apolloClient.query({
-    query: ALL_LINES_QUERY,
+    query: GET_ALL_LINES_QUERY,
   });
 
-  return addApolloState(apolloClient, {
-    props: {},
+  return {
+    props: {
+      initialApolloState: apolloClient.cache.extract(),
+    },
     revalidate: 1,
-  });
+  };
 }

@@ -114,4 +114,32 @@ export const H5 = styled.h5`
     props.darkModeActive ? lightTheme.text.primary : darkTheme.text.primary};
 `;
 
-export const H6 = styled.h6``;
+export const H2 = styled.h2`
+  font-weight: bold;
+  font-size: 42px;
+  line-height: 50px;
+  padding: 0;
+  margin: 0;
+  color: ${(props) =>
+    props.darkModeActive ? lightTheme.text.primary : darkTheme.text.primary};
+`;
+
+export const H3 = styled.h3`
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 36px;
+  padding: 0;
+  margin: 0;
+  color: ${(props) =>
+    props.darkModeActive ? lightTheme.text.primary : darkTheme.text.primary};
+`;
+
+export const H4 = styled.h4`
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 28px;
+  padding: 0;
+  margin: 0;
+  color: ${(props) =>
+    props.darkModeActive ? lightTheme.text.primary : darkTheme.text.primary};
+`;

@@ -117,7 +117,7 @@ export async function getServerSideProps(contex) {
   console.log(contex);
   //   const LINE_QUERY = gql`
   //     query line {
-  //       metroLine: metroLine(findBy: { id: $id }) {
+  //       metroLine: metroLine(findBy: { id: ${station_id} }) {
   //         ... on MetroLine {
   //           id
   //           originStation {

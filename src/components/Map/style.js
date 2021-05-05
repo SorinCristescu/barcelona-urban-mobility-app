@@ -9,12 +9,13 @@ export const MarkerButton = styled.button`
     outline: none;
   }
   &:hover {
-    transform: scale(1.2);
+    transform: scale(1.5);
     transition: transform 0.3s ease;
   }
+`;
 
-  img {
-    width: 35px;
-    height: 35px;
+export const PopupContainer = styled.div`
+  h3 {
+    color: ${(props) => props.color};
   }
 `;
