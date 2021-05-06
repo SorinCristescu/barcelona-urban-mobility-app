@@ -17,10 +17,16 @@ export const Container = styled.li`
   &:hover {
     background-color: ${(props) =>
       props.darkModeActive ? lightTheme.bg.secondary : darkTheme.bg.secondary};
+
+    p {
+      transform: scale(1.2);
+      display: block;
+    }
   }
   p {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 100;
+    display: none;
     color: ${(props) =>
       props.darkModeActive ? darkTheme.bg.primary : lightTheme.bg.primary};
   }

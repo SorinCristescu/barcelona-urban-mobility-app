@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useDarkMode } from 'next-dark-mode';
 
@@ -85,8 +86,11 @@ const Main = styled.div`
 `;
 
 function Line() {
+  const [showOnMap, setShowOnMap] = useState();
   const { darkModeActive } = useDarkMode();
   const router = useRouter();
+  const { pathname } = useRouter();
+
   const id = parseInt(router.query.id);
   console.log('pathname', router.pathname);
   const { loading, data } = useQuery(GET_METRO_LINE_BY_ID_QUERY, {
@@ -96,6 +100,7 @@ function Line() {
   });
 
   console.log('line', data);
+  console.log('on map', showOnMap);
 
   const markers = data.metroLine.stations.edges.map((marker) => {
     return {
@@ -111,6 +116,10 @@ function Line() {
     };
   });
 
+  const handleShowOnMap = (item) => {
+    setShowOnMap(item);
+  };
+
   if (loading) return <h5>Loading...</h5>;
 
   return (
@@ -121,10 +130,14 @@ function Line() {
           <H5 darkModeActive={darkModeActive}>Metro Line:</H5>
           <h2>{data.metroLine.name}</h2>
           <H5 darkModeActive={darkModeActive}>Stations:</H5>
-          <List data={markers} />
+          <List
+            data={markers}
+            pathname={pathname}
+            handleShowOnMap={handleShowOnMap}
+          />
         </div>
         <div className="map">
-          <Map markers={markers} id={id} />
+          <Map markers={markers} pathname={pathname} />
         </div>
       </Main>
     </div>

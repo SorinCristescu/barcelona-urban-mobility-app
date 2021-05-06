@@ -41,11 +41,12 @@ const SortButton = styled.button`
 `;
 
 export default function Home() {
-  const router = useRouter();
+  const { pathname } = useRouter();
+
   const { loading, data } = useQuery(GET_ALL_LINES_QUERY);
   const { darkModeActive } = useDarkMode();
 
-  console.log('router', router);
+  console.log('pathname', pathname);
 
   const metroLines = data.metroLines.edges.map((item) => {
     return {
@@ -143,7 +144,7 @@ export default function Home() {
             placeholder="Search for line or station"
           />
         </div>
-        <List data={filtered} />
+        <List data={filtered} pathname={pathname} />
       </Main>
     </div>
   );

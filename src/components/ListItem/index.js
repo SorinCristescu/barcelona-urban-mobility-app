@@ -3,11 +3,18 @@ import Image from 'next/image';
 import { useDarkMode } from 'next-dark-mode';
 import { Container } from './style';
 
-function ListItem({ item }) {
+function ListItem({ item, pathname, handleShowOnMap }) {
   const { darkModeActive } = useDarkMode();
   return (
-    <Container darkModeActive={darkModeActive} color={item.color}>
-      <Link href={`/line/${item.id}`}>
+    <Container
+      darkModeActive={darkModeActive}
+      color={item.color}
+      // onMouseEnter={handleShowOnMap(item)}
+      // onMouseLeave={handleShowOnMap()}
+    >
+      <Link
+        href={pathname === '/' ? `/line/${item.id}` : `/station/${item.id}`}
+      >
         <a>
           <div className="title">
             {item.type === 'BusLine' || item.type === 'BusStop' ? (
@@ -51,19 +58,10 @@ function ListItem({ item }) {
           </div>
         </a>
       </Link>
-      <Link href="/">
-        <a>
-          <div className="detail-link">
-            <p>More details</p>
-            <Image
-              src="/icons/arrow right.svg"
-              alt="arrow icon"
-              width={20}
-              height={20}
-            />
-          </div>
-        </a>
-      </Link>
+
+      <div className="detail-link">
+        <p>{pathname === '/' ? 'More details' : 'Show on map'}</p>
+      </div>
     </Container>
   );
 }
