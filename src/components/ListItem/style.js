@@ -38,12 +38,20 @@ export const Container = styled.li`
   }
 
   .title {
+    padding-left: 20px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    position: relative;
+
+    .heads {
+      position: absolute;
+      top: 25px;
+      left: -10px;
+    }
   }
-  .detail-link {
+  .more-details {
     width: 100px;
     display: flex;
     align-items: center;

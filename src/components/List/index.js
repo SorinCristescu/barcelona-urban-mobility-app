@@ -1,7 +1,7 @@
 import { Container } from './style';
 import ListItem from '../ListItem';
 
-function List({ data, pathname, handleShowOnMap }) {
+function List({ data, pathname, setShowOnMap, originStop, endingStop }) {
   return (
     <Container>
       {data &&
@@ -10,7 +10,9 @@ function List({ data, pathname, handleShowOnMap }) {
             key={index}
             item={item}
             pathname={pathname}
-            // handleShowOnMap={handleShowOnMap}
+            originStop={originStop}
+            endingStop={endingStop}
+            setShowOnMap={setShowOnMap}
           />
         ))}
     </Container>

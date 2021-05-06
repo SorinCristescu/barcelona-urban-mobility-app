@@ -1,13 +1,15 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
-import Link from 'next/link';
-import { useState, useEffect, useCallback } from 'react';
+import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ReactMapGl, {
   Marker,
   Popup,
   FullscreenControl,
   NavigationControl,
   GeolocateControl,
+  FlyToInterpolator,
 } from 'react-map-gl';
+import Geocoder from 'react-map-gl-geocoder';
 import { useDarkMode } from 'next-dark-mode';
 
 import { MarkerButton, PopupContainer } from './style';
@@ -25,23 +27,32 @@ const geolocateControlStyle = {
   bottom: 100,
 };
 
-function Map({ markers }) {
+function Map({ markers, showOnMap }) {
+  const mapRef = useRef();
+  const { latitude, longitude } = showOnMap
+    ? showOnMap.coordinates
+    : markers[0].coordinates;
+
   const { darkModeActive } = useDarkMode();
+
   const [viewport, setViewport] = useState({
-    latitude: 41.397236,
-    longitude: 2.172789,
-    zoom: 11,
+    latitude,
+    longitude,
+    zoom: 15,
     width: '100%',
     height: '80vh',
   });
+
   const [selectedMarker, setSelectedMarker] = useState(null);
 
   useEffect(() => {
     setViewport({
       ...viewport,
-      longitude: 2.172789,
-      latitude: 41.397236,
-      zoom: 11,
+      longitude,
+      latitude,
+      zoom: 15,
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator(),
     });
     const listener = (e) => {
       if (e.key === 'Escape') {
@@ -53,19 +64,31 @@ function Map({ markers }) {
     return () => {
       window.removeEventListener('keydown', listener);
     };
-  }, []);
+  }, [showOnMap]);
 
   const handleViewportChange = useCallback(
     (newViewport) => setViewport(newViewport),
     []
   );
+  const handleGeocoderViewportChange = useCallback(
+    (newViewport) => {
+      const geocoderDefaultOverrides = { transitionDuration: 1000 };
 
+      return handleViewportChange({
+        ...newViewport,
+        ...geocoderDefaultOverrides,
+      });
+    },
+    [handleViewportChange]
+  );
   const connectionLines =
     selectedMarker &&
     selectedMarker.type === 'MetroStation' &&
     selectedMarker.lines.filter((line) => line !== selectedMarker.name);
+
   return (
     <ReactMapGl
+      ref={mapRef}
       {...viewport}
       mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOXGL_ACCESS_TOKEN}
       mapStyle={
@@ -85,11 +108,24 @@ function Map({ markers }) {
         showAccuracyCircle={true}
         auto
       />
+      <Geocoder
+        mapRef={mapRef}
+        onViewportChange={handleGeocoderViewportChange}
+        mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOXGL_ACCESS_TOKEN}
+        position="top-left"
+        placeholder="Search address"
+        collapsed
+        // proximity={}
+        trackProximity
+      />
       {markers.map((marker) => {
         const { longitude, latitude } = marker.coordinates;
+        const scale = showOnMap && showOnMap.id === marker.id ? 2 : 1;
         return (
           <Marker key={marker.id} latitude={latitude} longitude={longitude}>
             <MarkerButton
+              marker={marker}
+              scale={scale}
               onClick={(e) => {
                 e.preventDefault();
                 setSelectedMarker(marker);

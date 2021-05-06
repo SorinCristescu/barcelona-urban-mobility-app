@@ -106,7 +106,7 @@ export const P = styled.p`
 
 export const H5 = styled.h5`
   font-weight: bold;
-  font-size: 18px;
+  font-size: 14px;
   line-height: 21px;
   padding: 0;
   margin: 0;
@@ -136,7 +136,7 @@ export const H3 = styled.h3`
 
 export const H4 = styled.h4`
   font-weight: bold;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 28px;
   padding: 0;
   margin: 0;

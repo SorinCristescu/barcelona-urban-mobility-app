@@ -3,23 +3,34 @@ import Image from 'next/image';
 import { useDarkMode } from 'next-dark-mode';
 import { Container } from './style';
 
-function ListItem({ item, pathname, handleShowOnMap }) {
+function ListItem({ item, pathname, setShowOnMap, originStop, endingStop }) {
   const { darkModeActive } = useDarkMode();
+
+  const handleShowOnMap = (item) => {
+    if (pathname !== '/') {
+      setShowOnMap(item);
+    } else {
+      return;
+    }
+  };
+
+  const handleLink = () => {
+    if (item.type === 'BusLine') {
+      return `/busLine/${item.id}`;
+    } else if (item.type === 'MetroLine') {
+      return `/metroLine/${item.id}`;
+    } else if (pathname === '/busLine/[id]' || pathname === '/metroLine/[id]') {
+      return 'javascript:void(0)';
+    }
+  };
   return (
-    <Container
-      darkModeActive={darkModeActive}
-      color={item.color}
-      // onMouseEnter={handleShowOnMap(item)}
-      // onMouseLeave={handleShowOnMap()}
-    >
-      <Link
-        href={
-          item.type === 'BusLine'
-            ? `/busLine/${item.id}`
-            : `/metroLine/${item.id}`
-        }
-      >
-        <a>
+    <Link href={`${handleLink()}`}>
+      <a>
+        <Container
+          darkModeActive={darkModeActive}
+          color={item.color}
+          onClick={() => handleShowOnMap(item)}
+        >
           <div className="title">
             {item.type === 'BusLine' || item.type === 'BusStop' ? (
               <svg
@@ -58,15 +69,59 @@ function ListItem({ item, pathname, handleShowOnMap }) {
                 </defs>
               </svg>
             ) : null}
+            {originStop &&
+            item.type !== 'BusLine' &&
+            item.type !== 'MetroLine' &&
+            item.id === originStop.id ? (
+              <svg
+                className="heads"
+                width="15"
+                height="15"
+                viewBox="0 0 25 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3.61915 0H1.19979C0.534467 0 -0.0098877 0.544355 -0.0098877 1.20968V23.7903C-0.0098877 24.4558 0.534467 25 1.19979 25H3.61915C4.28447 25 4.82882 24.4558 4.82882 23.7903V1.20968C4.82882 0.544355 4.28447 0 3.61915 0Z"
+                  fill={item.color}
+                />
+                <path
+                  d="M7.42157 15.4637H12.4619C13.1474 15.4637 13.7119 16.0282 13.7119 16.7137V18.871C13.7119 19.9195 14.9216 20.5042 15.7482 19.8589L23.8127 13.5887C24.4579 13.0847 24.4579 12.0968 23.8127 11.5927L15.7482 5.14112C14.9216 4.49596 13.7119 5.08064 13.7119 6.14918V8.30644C13.7119 8.99193 13.1474 9.55644 12.4619 9.55644H7.42157C6.73609 9.55644 6.17157 10.121 6.17157 10.8064V14.1935C6.15141 14.8992 6.71593 15.4637 7.42157 15.4637Z"
+                  fill={item.color}
+                />
+              </svg>
+            ) : null}
+            {endingStop &&
+            item.type !== 'BusLine' &&
+            item.type !== 'MetroLine' &&
+            item.name === endingStop.name ? (
+              <svg
+                className="heads"
+                width="15"
+                height="15"
+                viewBox="0 0 25 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M23.6191 0H21.1998C20.5345 0 19.9901 0.544355 19.9901 1.20968V23.7903C19.9901 24.4558 20.5345 25 21.1998 25H23.6191C24.2845 25 24.8288 24.4558 24.8288 23.7903V1.20968C24.8288 0.544355 24.2845 0 23.6191 0Z"
+                  fill={item.color}
+                />
+                <path
+                  d="M1.42157 15.4637H6.4619C7.14738 15.4637 7.7119 16.0282 7.7119 16.7137V18.871C7.7119 19.9195 8.92157 20.5042 9.74819 19.8589L17.8127 13.5887C18.4579 13.0847 18.4579 12.0968 17.8127 11.5927L9.74819 5.14112C8.92157 4.49596 7.7119 5.08064 7.7119 6.14918V8.30644C7.7119 8.99193 7.14738 9.55644 6.4619 9.55644H1.42157C0.736091 9.55644 0.171575 10.121 0.171575 10.8064V14.1935C0.151413 14.8992 0.71593 15.4637 1.42157 15.4637Z"
+                  fill={item.color}
+                />
+              </svg>
+            ) : null}
             <h5>{item.name}</h5>
           </div>
-        </a>
-      </Link>
 
-      <div className="detail-link">
-        <p>{pathname === '/' ? 'More details' : 'Show on map'}</p>
-      </div>
-    </Container>
+          <div className="more-details">
+            <p>{pathname === '/' ? 'More details' : 'Show on map'}</p>
+          </div>
+        </Container>
+      </a>
+    </Link>
   );
 }
 

@@ -6,6 +6,8 @@ export const GET_METRO_LINE_BY_ID_QUERY = gql`
       ... on MetroLine {
         id
         originStation {
+          id
+          name
           coordinates {
             latitude
             longitude
@@ -13,6 +15,8 @@ export const GET_METRO_LINE_BY_ID_QUERY = gql`
           lines
         }
         endingStation {
+          id
+          name
           coordinates {
             latitude
             longitude
