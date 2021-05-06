@@ -13,7 +13,11 @@ function ListItem({ item, pathname, handleShowOnMap }) {
       // onMouseLeave={handleShowOnMap()}
     >
       <Link
-        href={pathname === '/' ? `/line/${item.id}` : `/station/${item.id}`}
+        href={
+          item.type === 'BusLine'
+            ? `/busLine/${item.id}`
+            : `/metroLine/${item.id}`
+        }
       >
         <a>
           <div className="title">

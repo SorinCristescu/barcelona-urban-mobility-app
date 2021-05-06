@@ -4,7 +4,6 @@ import { useDarkMode } from 'next-dark-mode';
 
 import { useQuery } from '@apollo/client';
 import { initializeApollo } from '../../utils/apollo';
-import { GET_BUS_LINE_BY_ID_QUERY } from '../../utils/queries/getBusLineById';
 import { GET_METRO_LINE_BY_ID_QUERY } from '../../utils/queries/getMetroLineById';
 
 import Map from '../../components/Map';
@@ -85,21 +84,20 @@ const Main = styled.div`
   }
 `;
 
-function Line() {
+function MetroLine() {
   const [showOnMap, setShowOnMap] = useState();
   const { darkModeActive } = useDarkMode();
   const router = useRouter();
   const { pathname } = useRouter();
 
   const id = parseInt(router.query.id);
-  console.log('pathname', router.pathname);
+
   const { loading, data } = useQuery(GET_METRO_LINE_BY_ID_QUERY, {
     variables: {
       id: id,
     },
   });
 
-  console.log('line', data);
   console.log('on map', showOnMap);
 
   const markers = data.metroLine.stations.edges.map((marker) => {
@@ -144,7 +142,7 @@ function Line() {
   );
 }
 
-export default Line;
+export default MetroLine;
 
 export async function getServerSideProps({ query }) {
   const id = parseInt(query.id);

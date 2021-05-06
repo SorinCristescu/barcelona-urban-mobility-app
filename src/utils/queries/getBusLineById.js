@@ -1,10 +1,12 @@
 import { gql } from '@apollo/client';
 
 export const GET_BUS_LINE_BY_ID_QUERY = gql`
-  query BusLine {
+  query BusLine($id: Int!) {
     busLine: busLine(findBy: { id: $id }) {
       ... on BusLine {
         id
+        color
+        name
         originStop {
           location {
             address
@@ -51,9 +53,6 @@ export const GET_BUS_LINE_BY_ID_QUERY = gql`
             }
           }
         }
-        color
-
-        name
       }
     }
   }

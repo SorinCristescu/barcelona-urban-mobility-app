@@ -46,8 +46,6 @@ export default function Home() {
   const { loading, data } = useQuery(GET_ALL_LINES_QUERY);
   const { darkModeActive } = useDarkMode();
 
-  console.log('pathname', pathname);
-
   const metroLines = data.metroLines.edges.map((item) => {
     return {
       id: item.node.id,
