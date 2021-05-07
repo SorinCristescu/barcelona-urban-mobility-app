@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { device } from '../../styles';
+import { device, lightTheme, darkTheme } from '../../styles';
 
 export const Container = styled.header`
   width: 100%;
@@ -7,6 +7,26 @@ export const Container = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
+
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .btn {
+      margin-right: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      color: ${(props) =>
+        props.darkModeActive
+          ? lightTheme.text.primary
+          : darkTheme.text.primary};
+    }
+    .btn:active {
+      transform: scale(0.95);
+    }
+  }
 `;
 
 export const Logo = styled.div`

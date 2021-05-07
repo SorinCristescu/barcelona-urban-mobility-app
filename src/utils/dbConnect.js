@@ -32,6 +32,7 @@ async function dbConnect() {
       bufferMaxEntries: 0,
       useFindAndModify: false,
       useCreateIndex: true,
+      poolSize: 10, //increase poolSize from default 5
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {

@@ -94,20 +94,11 @@ export const Container = styled.div`
   }
 `;
 
-export const P = styled.p`
-  font-weight: 200;
-  font-size: 18px;
-  line-height: 21px;
-  padding: 0;
-  margin: 0;
-  color: ${(props) =>
-    props.darkModeActive ? lightTheme.text.primary : darkTheme.text.primary};
-`;
-
-export const H5 = styled.h5`
+export const H1 = styled.h2`
   font-weight: bold;
-  font-size: 14px;
-  line-height: 21px;
+  font-size: 28px;
+  line-height: 34px;
+  text-align: center;
   padding: 0;
   margin: 0;
   color: ${(props) =>
@@ -138,6 +129,26 @@ export const H4 = styled.h4`
   font-weight: bold;
   font-size: 20px;
   line-height: 28px;
+  padding: 0;
+  margin: 0;
+  color: ${(props) =>
+    props.darkModeActive ? lightTheme.text.primary : darkTheme.text.primary};
+`;
+
+export const H5 = styled.h5`
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 21px;
+  padding: 0;
+  margin: 0;
+  color: ${(props) =>
+    props.darkModeActive ? lightTheme.text.primary : darkTheme.text.primary};
+`;
+
+export const P = styled.p`
+  font-weight: 200;
+  font-size: 18px;
+  line-height: 21px;
   padding: 0;
   margin: 0;
   color: ${(props) =>

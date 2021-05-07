@@ -4,13 +4,16 @@ import { useDarkMode } from 'next-dark-mode';
 import { signIn, signOut, useSession } from 'next-auth/client';
 
 // Components
+import User from '../User';
 import { Container, Logo } from './style';
 import { P, H5 } from '../../styles';
 
 function Header({ theme }) {
   const { darkModeActive, switchToDarkMode, switchToLightMode } = useDarkMode();
+  const [session, loading] = useSession();
+
   return (
-    <Container>
+    <Container darkModeActive={darkModeActive}>
       <Link href="/">
         <a>
           <Logo>
@@ -29,15 +32,34 @@ function Header({ theme }) {
           </Logo>
         </a>
       </Link>
-
-      <Image
-        style={{ cursor: 'pointer' }}
-        onClick={darkModeActive ? switchToLightMode : switchToDarkMode}
-        src={darkModeActive ? '/icons/dark.svg' : '/icons/light.svg'}
-        alt="icon image"
-        width={25}
-        height={25}
-      />
+      <div className="navbar">
+        {session && (
+          <User
+            src={session.user.image}
+            alt={`${session.user.name} photo`}
+            name={session.user.name}
+            darkModeActive={darkModeActive}
+          />
+        )}
+        {!session && (
+          <p className="btn" onClick={() => signIn()}>
+            sign in
+          </p>
+        )}
+        {session && (
+          <p className="btn" onClick={() => signOut()}>
+            log out
+          </p>
+        )}
+        <Image
+          style={{ cursor: 'pointer' }}
+          onClick={darkModeActive ? switchToLightMode : switchToDarkMode}
+          src={darkModeActive ? '/icons/dark.svg' : '/icons/light.svg'}
+          alt="icon image"
+          width={25}
+          height={25}
+        />
+      </div>
     </Container>
   );
 }
