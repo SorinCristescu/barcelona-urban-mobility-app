@@ -1,6 +1,6 @@
 ## TMB Transportation metropolitans de Barcelona
 
-# Although people living in Barcelona are really used to get around the city using public transportation, for a newcomer it can be a bit difficult to learn. I'm happy if people will found this project useful.
+Although people living in Barcelona are really used to get around the city using public transportation, for a newcomer it can be a bit difficult to learn. I'm happy if people will found this project useful.
 
 ---
 
@@ -19,7 +19,7 @@ This is a React project that uses Next.js framework.
 - Atlas MongoDB and mongoose for database.
 - Dark mode implementation.
 
-You can see a live demo at **https://nextjs-starter.now.sh**
+You can see a live demo at **https://tmb.vercel.app**
 
 ## About
 
