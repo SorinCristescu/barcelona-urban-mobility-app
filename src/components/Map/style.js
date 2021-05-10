@@ -19,4 +19,23 @@ export const PopupContainer = styled.div`
   h3 {
     color: ${(props) => props.color};
   }
+
+  .favorite {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  button {
+    border: none;
+    background-color: transparent;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
 `;

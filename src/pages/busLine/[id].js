@@ -1,29 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useSession, getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/client';
 import { useDarkMode } from 'next-dark-mode';
-import dbConnect from '../../utils/dbConnect';
-import User from '../../models/User';
+
+import { initializeStore } from '../../store';
 import { useQuery } from '@apollo/client';
 import { initializeApollo } from '../../utils/apollo';
 import { GET_BUS_LINE_BY_ID_QUERY } from '../../utils/queries/getBusLineById';
 import PageHead from '../../components/PageHead';
 import PageContent from '../../components/PageContent';
 import { H1 } from '../../styles';
+import SignIn from '../../components/SignIn';
 
-// const fetcher = (url) =>
-//   fetch(url)
-//     .then((res) => res.json())
-//     .then((json) => json.data);
-
-function BusLine() {
-  // As this page uses Server Side Rendering, the `session` will be already
-  // populated on render without needing to go through a loading stage.
-  // This is possible because of the shared context configured in `_app.js` that
-  // is used by `useSession()`.
-  const [session] = useSession();
+function BusLine({ session }) {
   const [showOnMap, setShowOnMap] = useState();
-  const [favorites, setFavorites] = useState([]);
   const { darkModeActive } = useDarkMode();
   const router = useRouter();
   const { pathname } = useRouter();
@@ -55,31 +45,11 @@ function BusLine() {
   const originStop = data.busLine.originStop;
   const endingStop = data.busLine.endingStop;
 
-  const addFavorite = (marker) => {
-    const isFavorite = favorites.filter(
-      (favorite) => favorite.id === marker.id
-    );
-    if (isFavorite.lenght === 0) {
-      const updateFavorites = favorites.push(marker);
-      setFavorite(updateFavorites);
-    } else {
-      const index = favorites.indexOf(marker);
-      if (index > -1) {
-        const newFavorites = favorites.splice(index, 1);
-        etFavorite(newFavorites);
-      }
-    }
-  };
-  // const { data: pet, error } = useSWR(id ? `/api/pets/${id}` : null, fetcher);
-  // useEffect(() => {}, [favorites]);
-  console.log('favorites', favorites);
-
-  console.log('show on map', showOnMap);
-  if (!session) return <H1 darkModeActive={darkModeActive}>Please sign in!</H1>;
+  if (!session) return <SignIn />;
   if (loading) return <H1 darkModeActive={darkModeActive}>Loading...</H1>;
 
   return (
-    <div>
+    <>
       <PageHead />
       <PageContent
         darkModeActive={darkModeActive}
@@ -91,22 +61,19 @@ function BusLine() {
         showOnMap={showOnMap}
         lineColor={data.busLine.color}
         lineName={data.busLine.name}
-        addFavorite={addFavorite}
       />
-    </div>
+    </>
   );
 }
 
 export default BusLine;
 
 export async function getServerSideProps(context) {
-  await dbConnect();
-  const id = parseInt(context.query.id);
+  const session = await getSession(context);
+  const reduxStore = initializeStore();
   const apolloClient = initializeApollo();
 
-  const session = await getSession(context);
-
-  const userEmail = session.user.email;
+  const id = parseInt(context.query.id);
 
   await apolloClient.query({
     query: GET_BUS_LINE_BY_ID_QUERY,
@@ -115,15 +82,9 @@ export async function getServerSideProps(context) {
     },
   });
 
-  // const user = await User.findOne({ email: userEmail }).lean();
-  // user._id = user._id.toString();
-  // user.createdAt = user.createdAt.toString();
-  // user.updatedAt = user.updatedAt.toString();
-
   return {
     props: {
       initialApolloState: apolloClient.cache.extract(),
-      // favorites: user.favorites.busStops,
       session,
     },
   };

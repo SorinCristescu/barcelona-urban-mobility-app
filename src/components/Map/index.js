@@ -1,6 +1,12 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getProfile,
+  addFavorite,
+  deletedFavorite,
+} from '../../store/profile/actions';
 import ReactMapGl, {
   Marker,
   Popup,
@@ -27,14 +33,17 @@ const geolocateControlStyle = {
   bottom: 100,
 };
 
-function Map({ markers, showOnMap, addFavorite }) {
+function Map({ markers, showOnMap }) {
   const mapRef = useRef();
+  const dispatch = useDispatch();
   const { latitude, longitude } = showOnMap
     ? showOnMap.coordinates
     : markers[0].coordinates;
 
   const { darkModeActive } = useDarkMode();
+  const profile = useSelector((state) => state.profile.profile);
 
+  console.log('from map', profile);
   const [viewport, setViewport] = useState({
     latitude,
     longitude,
@@ -44,6 +53,36 @@ function Map({ markers, showOnMap, addFavorite }) {
   });
 
   const [selectedMarker, setSelectedMarker] = useState(null);
+
+  const idFavorites = new Set(profile?.favorites.map((o) => o.id));
+
+  const augmentedMarkers = markers.map((o) => ({
+    ...o,
+    isFavorite: idFavorites.has(o.id) ? true : false,
+  }));
+
+  console.log('augmentedMarkers', augmentedMarkers);
+
+  const handleFavorite = (selectedMarker) => {
+    console.log('selectedMarker', selectedMarker);
+    if (!selectedMarker.isFavorite) {
+      const markerToBeAdded = {
+        ...selectedMarker,
+        isFavorite: true,
+      };
+      const favorite = {
+        profileId: profile?._id,
+        favorite: markerToBeAdded,
+      };
+      dispatch(addFavorite(favorite));
+    } else if (selectedMarker.isFavorite) {
+      const favorite = {
+        profileId: profile?._id,
+        favoriteId: selectedMarker.id,
+      };
+      dispatch(deletedFavorite(favorite));
+    }
+  };
 
   useEffect(() => {
     setViewport({
@@ -118,11 +157,11 @@ function Map({ markers, showOnMap, addFavorite }) {
         // proximity={}
         trackProximity
       />
-      {markers.map((marker) => {
+      {augmentedMarkers.map((marker, index) => {
         const { longitude, latitude } = marker.coordinates;
         const scale = showOnMap && showOnMap.id === marker.id ? 2 : 1;
         return (
-          <Marker key={marker.id} latitude={latitude} longitude={longitude}>
+          <Marker key={index} latitude={latitude} longitude={longitude}>
             <MarkerButton
               marker={marker}
               scale={scale}
@@ -184,28 +223,31 @@ function Map({ markers, showOnMap, addFavorite }) {
             captureClick
           >
             <>
-              <p>{selectedMarker.type}</p>
-              <button
-                onClick={() => {
-                  addFavorite(selectedMarker);
-                  console.log('selectedMarker', selectedMarker);
-                }}
-              >
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 28 28"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+              <div className="favorite">
+                <p>{selectedMarker.type}</p>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleFavorite(selectedMarker);
+                  }}
                 >
-                  <path
-                    d="M22.4578 6.59133C21.9691 6.08683 21.3889 5.68663 20.7503 5.41358C20.1117 5.14054 19.4272 5 18.7359 5C18.0446 5 17.3601 5.14054 16.7215 5.41358C16.0829 5.68663 15.5026 6.08683 15.0139 6.59133L13.9997 7.63785L12.9855 6.59133C11.9984 5.57276 10.6596 5.00053 9.26361 5.00053C7.86761 5.00053 6.52879 5.57276 5.54168 6.59133C4.55456 7.6099 4 8.99139 4 10.4319C4 11.8723 4.55456 13.2538 5.54168 14.2724L6.55588 15.3189L13.9997 23L21.4436 15.3189L22.4578 14.2724C22.9467 13.7681 23.3346 13.1694 23.5992 12.5105C23.8638 11.8515 24 11.1452 24 10.4319C24 9.71857 23.8638 9.01225 23.5992 8.35328C23.3346 7.69431 22.9467 7.09559 22.4578 6.59133V6.59133Z"
-                    stroke="#999999"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 28 28"
+                    fill={selectedMarker.isFavorite ? '#333333' : 'transparent'}
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M22.4578 6.59133C21.9691 6.08683 21.3889 5.68663 20.7503 5.41358C20.1117 5.14054 19.4272 5 18.7359 5C18.0446 5 17.3601 5.14054 16.7215 5.41358C16.0829 5.68663 15.5026 6.08683 15.0139 6.59133L13.9997 7.63785L12.9855 6.59133C11.9984 5.57276 10.6596 5.00053 9.26361 5.00053C7.86761 5.00053 6.52879 5.57276 5.54168 6.59133C4.55456 7.6099 4 8.99139 4 10.4319C4 11.8723 4.55456 13.2538 5.54168 14.2724L6.55588 15.3189L13.9997 23L21.4436 15.3189L22.4578 14.2724C22.9467 13.7681 23.3346 13.1694 23.5992 12.5105C23.8638 11.8515 24 11.1452 24 10.4319C24 9.71857 23.8638 9.01225 23.5992 8.35328C23.3346 7.69431 22.9467 7.09559 22.4578 6.59133V6.59133Z"
+                      stroke="#333333"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+
               <h3>{selectedMarker.name}</h3>
               <div className="popup-text">
                 {selectedMarker.type === 'MetroStation' &&

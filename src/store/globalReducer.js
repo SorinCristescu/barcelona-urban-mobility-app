@@ -1,13 +1,9 @@
 import { combineReducers } from 'redux';
-// import { linesReducer } from './lines/reducers';
-// import { authReducer } from './auth/reducers';
-import { navigationReducer } from './navigation/reducers';
+import { profileReducer } from './profile/reducers';
 
 // COMBINED REDUCERS
 const globalReducer = {
-  // auth: authReducer,
-  // lines: linesReducer,
-  navigation: navigationReducer,
+  profile: profileReducer,
 };
 
 export default combineReducers(globalReducer);

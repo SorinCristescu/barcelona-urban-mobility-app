@@ -15,7 +15,6 @@ function PageContent({
   showOnMap,
   lineColor,
   lineName,
-  addFavorite,
 }) {
   return (
     <Main color={`#${lineColor}`}>
@@ -36,12 +35,7 @@ function PageContent({
         </div>
         <div className="map">
           <small>Click on marker to see station details</small>
-          <Map
-            markers={markers}
-            pathname={pathname}
-            showOnMap={showOnMap}
-            addFavorite={addFavorite}
-          />
+          <Map markers={markers} pathname={pathname} showOnMap={showOnMap} />
         </div>
       </div>
     </Main>

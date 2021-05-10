@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { getSession } from 'next-auth/client';
+import { initializeStore } from '../store';
+import { useSelector } from 'react-redux';
+import { getProfile } from '../store/profile/actions';
 import PageHead from '../components/PageHead';
 import SearchBar from '../components/SearchBar';
 import styled from 'styled-components';
@@ -10,6 +14,7 @@ import { useQuery } from '@apollo/client';
 import { initializeApollo } from '../utils/apollo';
 import { GET_ALL_LINES_QUERY } from '../utils/queries/getAllLines';
 import List from '../components/List';
+import SignIn from '../components/SignIn';
 
 const Main = styled.div`
   width: 100%;
@@ -40,9 +45,8 @@ const SortButton = styled.button`
   }
 `;
 
-export default function Home() {
+export default function Home({ session }) {
   const { pathname } = useRouter();
-
   const { loading, data } = useQuery(GET_ALL_LINES_QUERY);
   const { darkModeActive } = useDarkMode();
 
@@ -54,6 +58,7 @@ export default function Home() {
       type: item.node.__typename,
     };
   });
+
   const busLines = data.busLines.edges.map((item) => {
     return {
       id: item.node.id,
@@ -95,11 +100,12 @@ export default function Home() {
     }
   }, [searchParam, sortedMethod]);
 
+  if (!session) return <SignIn />;
   if (loading) return <h5>Loading...</h5>;
 
   return (
-    <div>
-      <PageHead title="TMB - Home" description="" keywords="" />
+    <>
+      <PageHead title="TMB - Search" description="" keywords="" />
       <Main>
         <div className="search">
           <SortButton darkModeActive={darkModeActive} onClick={toggleSort}>
@@ -144,12 +150,19 @@ export default function Home() {
         </div>
         <List data={filtered} pathname={pathname} />
       </Main>
-    </div>
+    </>
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
   const apolloClient = initializeApollo();
+  const reduxStore = initializeStore();
+  const { dispatch } = reduxStore;
+
+  if (session) {
+    dispatch(getProfile(session.user.email));
+  }
 
   await apolloClient.query({
     query: GET_ALL_LINES_QUERY,
@@ -158,7 +171,8 @@ export async function getStaticProps() {
   return {
     props: {
       initialApolloState: apolloClient.cache.extract(),
+      initialReduxState: reduxStore.getState(),
+      session,
     },
-    revalidate: 1,
   };
 }

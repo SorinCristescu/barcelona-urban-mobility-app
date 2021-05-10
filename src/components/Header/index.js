@@ -25,7 +25,7 @@ function Header({ theme }) {
             />
             <div className="text">
               <P darkModeActive={darkModeActive}>
-                Transportations metropolitans
+                Transportation metropolitans
               </P>
               <H5 darkModeActive={darkModeActive}>de Barcelona</H5>
             </div>
@@ -48,7 +48,7 @@ function Header({ theme }) {
         )}
         {session && (
           <p className="btn" onClick={() => signOut()}>
-            log out
+            sign out
           </p>
         )}
         <Image
