@@ -2,7 +2,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addFavorite, deletedFavorite } from '../../store/profile/actions';
+import { addFavorite, deleteFavorite } from '../../store/profile/actions';
 import ReactMapGl, {
   Marker,
   Popup,
@@ -38,6 +38,7 @@ function Map({ markers, showOnMap }) {
 
   const { darkModeActive } = useDarkMode();
   const profile = useSelector((state) => state.profile.profile);
+  const [showPopup, togglePopup] = useState(true);
 
   console.log('from map', profile);
   const [viewport, setViewport] = useState({
@@ -58,13 +59,11 @@ function Map({ markers, showOnMap }) {
     ...o,
     isFavorite: idFavorites.has(o.id) ? true : false,
   }));
-  console.log('markers', augmentedMarkers);
   console.log('profile', profile);
+  console.log('markers', augmentedMarkers);
 
   const handleFavorite = (selectedMarker) => {
-    console.log('selectedMarker', selectedMarker);
     if (!selectedMarker.isFavorite) {
-      console.log('to be added', selectedMarker);
       const markerToBeAdded = {
         ...selectedMarker,
         isFavorite: true,
@@ -75,12 +74,11 @@ function Map({ markers, showOnMap }) {
       };
       dispatch(addFavorite(favorite));
     } else if (selectedMarker.isFavorite) {
-      console.log('to delete', selectedMarker);
       const favorite = {
         profileId: profile?._id,
         favoriteId: selectedMarker.id,
       };
-      dispatch(deletedFavorite(favorite));
+      dispatch(deleteFavorite(favorite));
     }
   };
 
@@ -118,7 +116,7 @@ function Map({ markers, showOnMap }) {
         ...geocoderDefaultOverrides,
       });
     },
-    [handleViewportChange]
+    [handleViewportChange, profile]
   );
   const connectionLines =
     selectedMarker &&
@@ -212,22 +210,29 @@ function Map({ markers, showOnMap }) {
       })}
       {selectedMarker ? (
         <PopupContainer color={selectedMarker.color}>
+          {/* {showPopup && ( */}
           <Popup
             className="popup"
             latitude={selectedMarker.coordinates.latitude}
             longitude={selectedMarker.coordinates.longitude}
-            onClose={() => setSelectedMarker(null)}
+            // onClose={() => setSelectedMarker(null)}
             dynamicPosition
             offsetLeft={13}
             offsetTop={15}
             // captureClick
+            closeButton={true}
+            closeOnClick={true}
+            sortByDepth={true}
+            onClose={(e) => {
+              // togglePopup(false);
+              setSelectedMarker(null);
+            }}
           >
             <>
               <div className="favorite">
                 <p>{selectedMarker.type}</p>
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
+                  onClick={() => {
                     handleFavorite(selectedMarker);
                   }}
                 >
@@ -273,6 +278,7 @@ function Map({ markers, showOnMap }) {
               </div>
             </>
           </Popup>
+          {/* )} */}
         </PopupContainer>
       ) : null}
     </ReactMapGl>

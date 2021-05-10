@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     method,
   } = req;
   await dbConnect();
-  console.log('from delete', session);
+
   if (session) {
     switch (method) {
       case 'DELETE':
@@ -21,16 +21,29 @@ export default async function handler(req, res) {
           if (!user) {
             return res.status(400).json({ success: false });
           }
-          const profile = Profile.findOne({ user: user._id });
+          const profile = await Profile.findOne({ user: user._id });
           if (!profile) {
             return res.status(400).json({ success: false });
           }
+
           const existing = !!profile.favorites.find(
             (favorite) => favorite.id === favorite_id
           );
+
           if (existing) {
-            await Favorite.deleteOne({ id: favorite_id });
-            res.status(200).json({ success: true, data: profile });
+            const profileUpdated = profile?.favorites.splice(
+              profile?.favorites.findIndex(
+                (favorite) => favorite.id === favorite_id
+              ),
+              1
+            );
+            await profileUpdated.save();
+            res.status(200).json({ success: true, data: profileUpdated });
+            res.end();
+          }
+          if (!existing) {
+            res.status(400).json({ success: false });
+            res.end();
           }
         } catch (error) {
           res.status(400).json({ success: false });
@@ -45,4 +58,5 @@ export default async function handler(req, res) {
       error: 'You must be sign in to view the protected content on this page.',
     });
   }
+  res.end();
 }
