@@ -1,5 +1,6 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import PropTypes from 'prop-types';
 import { isMobile } from 'react-device-detect';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,7 +42,6 @@ function Map({ markers, showOnMap }) {
   const profile = useSelector((state) => state.profile.profile);
   const [showPopup, togglePopup] = useState(true);
 
-  console.log('from map', profile);
   const [viewport, setViewport] = useState({
     latitude,
     longitude,
@@ -52,7 +52,6 @@ function Map({ markers, showOnMap }) {
 
   const [selectedMarker, setSelectedMarker] = useState(null);
   // const [isSelected, setIsSelected] = useState(selectedMarker.isFavorite);
-  console.log('selectedMArker', selectedMarker?.isFavorite);
 
   const idFavorites = new Set(profile?.favorites.map((o) => o.id));
 
@@ -60,8 +59,6 @@ function Map({ markers, showOnMap }) {
     ...o,
     isFavorite: idFavorites.has(o.id) ? true : false,
   }));
-  console.log('profile', profile);
-  console.log('markers', augmentedMarkers);
 
   const handleFavorite = (selectedMarker) => {
     if (!selectedMarker.isFavorite) {
@@ -123,7 +120,7 @@ function Map({ markers, showOnMap }) {
     selectedMarker &&
     selectedMarker.type === 'MetroStation' &&
     selectedMarker.lines.filter((line) => line !== selectedMarker.name);
-  console.log(isMobile);
+
   return (
     <ReactMapGl
       ref={mapRef}
@@ -286,5 +283,10 @@ function Map({ markers, showOnMap }) {
     </ReactMapGl>
   );
 }
+
+Map.propTypes = {
+  markers: PropTypes.array.isRequired,
+  showOnMap: PropTypes.bool,
+};
 
 export default Map;

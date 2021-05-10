@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { Container, Button } from './style';
 import { signIn } from 'next-auth/client';
 import { useDarkMode } from 'next-dark-mode';
-import { H4 } from '../../styles';
 
 function SignIn() {
   const { darkModeActive } = useDarkMode();

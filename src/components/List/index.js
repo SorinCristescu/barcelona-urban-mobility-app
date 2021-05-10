@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Container } from './style';
 import ListItem from '../ListItem';
 
@@ -18,5 +19,13 @@ function List({ data, pathname, setShowOnMap, originStop, endingStop }) {
     </Container>
   );
 }
+
+List.propTypes = {
+  data: PropTypes.array.isRequired,
+  pathname: PropTypes.string.isRequired,
+  setShowOnMap: PropTypes.func,
+  originStop: PropTypes.object,
+  endingStop: PropTypes.object,
+};
 
 export default List;

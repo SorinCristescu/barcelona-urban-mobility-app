@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import PropTypes from 'prop-types';
 import Image from 'next/image';
 import { useDarkMode } from 'next-dark-mode';
 import { Container } from './style';
@@ -124,5 +125,13 @@ function ListItem({ item, pathname, setShowOnMap, originStop, endingStop }) {
     </Link>
   );
 }
+
+ListItem.propTypes = {
+  item: PropTypes.object.isRequired,
+  pathname: PropTypes.string.isRequired,
+  setShowOnMap: PropTypes.func,
+  originStop: PropTypes.object,
+  endingStop: PropTypes.object,
+};
 
 export default ListItem;

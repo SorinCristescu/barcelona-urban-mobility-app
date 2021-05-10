@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import PropTypes from 'prop-types';
 import { useDarkMode } from 'next-dark-mode';
 import { H4, lightTheme, darkTheme } from '../../styles';
 import { Container } from './style';

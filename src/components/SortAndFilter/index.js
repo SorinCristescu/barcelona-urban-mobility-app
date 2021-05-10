@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useDarkMode } from 'next-dark-mode';
 import { Container, SortButton } from './style';
 import { lightTheme, darkTheme } from '../../styles';
@@ -47,5 +48,12 @@ function SortAndFilter({
     </Container>
   );
 }
+
+SortAndFilter.propTypes = {
+  handlerSearch: PropTypes.func.isRequired,
+  toggleSort: PropTypes.func.isRequired,
+  sortedMethod: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
+};
 
 export default SortAndFilter;

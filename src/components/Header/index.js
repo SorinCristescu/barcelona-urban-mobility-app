@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import PropTypes from 'prop-types';
 import { useDarkMode } from 'next-dark-mode';
 import { signIn, signOut, useSession } from 'next-auth/client';
 
@@ -8,7 +9,7 @@ import User from '../User';
 import { Container, Logo } from './style';
 import { P, H5 } from '../../styles';
 
-function Header({ theme }) {
+function Header() {
   const { darkModeActive, switchToDarkMode, switchToLightMode } = useDarkMode();
   const [session, loading] = useSession();
 

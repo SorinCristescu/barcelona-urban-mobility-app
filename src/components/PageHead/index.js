@@ -1,6 +1,7 @@
 import Head from 'next/head';
+import PropTypes from 'prop-types';
 
-export default function PageHead({ title, description, keywords }) {
+function PageHead({ title, description, keywords }) {
   return (
     <Head>
       <meta charSet="utf-8" />
@@ -78,3 +79,10 @@ export default function PageHead({ title, description, keywords }) {
     </Head>
   );
 }
+
+PageHead.propTypes = {
+  onChange: PropTypes.func,
+  placeholder: PropTypes.string,
+};
+
+export default PageHead;

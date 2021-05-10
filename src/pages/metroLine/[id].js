@@ -27,8 +27,6 @@ function MetroLine({ session }) {
 
   const id = parseInt(router.query.id);
 
-  console.log('profile from metro', profile);
-
   const { data } = useQuery(GET_METRO_LINE_BY_ID_QUERY, {
     variables: {
       id: id,

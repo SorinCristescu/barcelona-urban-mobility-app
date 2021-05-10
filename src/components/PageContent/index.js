@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import List from '../../components/List';
 import BackLink from '../../components/BackLink';
 import Map from '../../components/Map';
@@ -41,5 +42,16 @@ function PageContent({
     </Main>
   );
 }
+
+PageContent.propTypes = {
+  darkModeActive: PropTypes.bool.isRequired,
+  pathname: PropTypes.string.isRequired,
+  originStop: PropTypes.object,
+  endingStop: PropTypes.object,
+  setShowOnMap: PropTypes.func.isRequired,
+  showOnMap: PropTypes.bool,
+  lineColor: PropTypes.string.isRequired,
+  lineName: PropTypes.string.isRequired,
+};
 
 export default PageContent;

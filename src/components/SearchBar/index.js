@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useDarkMode } from 'next-dark-mode';
 import { Container } from './style';
 
@@ -12,5 +12,10 @@ function SearchBar({ onChange, placeholder }) {
     </Container>
   );
 }
+
+SearchBar.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  placeholder: PropTypes.string.isRequired,
+};
 
 export default SearchBar;
