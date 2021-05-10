@@ -11,15 +11,15 @@ export const Main = styled.div`
 
   .content {
     width: 100%;
+    height: auto;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
   }
   .details {
-    padding-right: 20px;
-    width: 50%;
     height: 100%;
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
@@ -31,22 +31,25 @@ export const Main = styled.div`
       color: ${(props) => props.color};
     }
     @media ${device.mobileS} {
-      display: none;
+      width: 100%;
     }
     @media ${device.mobileM} {
-      display: none;
+      width: 100%;
     }
     @media ${device.mobileL} {
-      display: none;
+      width: 100%;
     }
     @media ${device.laptop} {
-      display: flex;
+      width: 50%;
+      padding-right: 20px;
     }
     @media ${device.laptopL} {
-      display: flex;
+      width: 50%;
+      padding-right: 20px;
     }
     @media ${device.desktop} {
-      display: flex;
+      width: 50%;
+      padding-right: 20px;
     }
   }
 

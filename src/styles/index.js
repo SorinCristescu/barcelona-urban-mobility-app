@@ -68,8 +68,9 @@ export const darkTheme = {
 export const Container = styled.div`
   width: 100%;
   /* min-height: 100vh; */
+
   padding: 0 6rem;
-  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
   background-color: ${(props) =>
     props.darkModeActive ? lightTheme.bg.primary : darkTheme.bg.primary};

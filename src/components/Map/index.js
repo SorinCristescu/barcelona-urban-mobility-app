@@ -1,5 +1,6 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import { isMobile } from 'react-device-detect';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addFavorite, deleteFavorite } from '../../store/profile/actions';
@@ -122,11 +123,12 @@ function Map({ markers, showOnMap }) {
     selectedMarker &&
     selectedMarker.type === 'MetroStation' &&
     selectedMarker.lines.filter((line) => line !== selectedMarker.name);
-
+  console.log(isMobile);
   return (
     <ReactMapGl
       ref={mapRef}
       {...viewport}
+      scrollZoom={!isMobile}
       mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOXGL_ACCESS_TOKEN}
       mapStyle={
         darkModeActive

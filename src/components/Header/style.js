@@ -30,7 +30,6 @@ export const Container = styled.header`
 `;
 
 export const Logo = styled.div`
-  width: 350px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -78,5 +77,24 @@ export const Logo = styled.div`
     @media ${device.desktop} {
       display: flex;
     }
+  }
+
+  @media ${device.mobileS} {
+    width: 100px;
+  }
+  @media ${device.mobileM} {
+    width: 100px;
+  }
+  @media ${device.mobileL} {
+    width: 100px;
+  }
+  @media ${device.laptop} {
+    width: 350px;
+  }
+  @media ${device.laptopL} {
+    width: 350px;
+  }
+  @media ${device.desktop} {
+    width: 350px;
   }
 `;
