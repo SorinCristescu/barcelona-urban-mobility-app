@@ -3,8 +3,8 @@ import { lightTheme, darkTheme } from '../../styles';
 
 export const Container = styled.div`
   position: absolute;
-  top: 80px;
-  right: 0px;
+  top: 35px;
+  right: 130px;
   display: flex;
   justify-content: flex-end;
   align-items: center;

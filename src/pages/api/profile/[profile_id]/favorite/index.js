@@ -24,9 +24,9 @@ export default async function handler(req, res) {
             return res.status(400).json({ success: false });
           }
           const existing = !!profile.favorites.find(
-            (favorite) => favorite._id === body.id
+            (favorite) => favorite.id === body.id
           );
-          console.log('existing', existing);
+
           if (existing) {
             res.status(400).json({
               success: false,
@@ -34,9 +34,13 @@ export default async function handler(req, res) {
             });
             res.end();
           }
-          profile.favorites.push(body);
-          await profile.save();
-          res.status(200).json({ success: true, data: profile });
+
+          if (!existing) {
+            profile.favorites.push(body);
+            await profile.save();
+            res.status(200).json({ success: true, data: profile });
+            res.end();
+          }
         } catch (error) {
           res.status(400).json({ success: false });
         }

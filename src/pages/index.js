@@ -2,10 +2,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/client';
 import { initializeStore } from '../store';
-import { useSelector } from 'react-redux';
 import { getProfile } from '../store/profile/actions';
 import PageHead from '../components/PageHead';
-import SearchBar from '../components/SearchBar';
 import styled from 'styled-components';
 import { useDarkMode } from 'next-dark-mode';
 import { lightTheme, darkTheme } from '../styles';
@@ -15,33 +13,20 @@ import { initializeApollo } from '../utils/apollo';
 import { GET_ALL_LINES_QUERY } from '../utils/queries/getAllLines';
 import List from '../components/List';
 import SignIn from '../components/SignIn';
+import SortAndFilter from '../components/SortAndFilter';
 
 const Main = styled.div`
   width: 100%;
   padding-top: 50px;
-  .search {
+
+  .no-data {
+    width: 100%;
+    height: 60vh;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-  }
-`;
-
-const SortButton = styled.button`
-  margin-right: 0 20px 0 0;
-  width: 50px;
-  height: 50px;
-  border: none;
-  border-radius: 50%;
-  background-color: ${(props) =>
-    props.darkModeActive ? darkTheme.bg.primary : lightTheme.bg.primary};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-
-  &:focus {
-    outline: none;
+    justify-content: center;
+    color: ${(props) =>
+      props.darkModeActive ? lightTheme.text.primary : darkTheme.text.primary};
   }
 `;
 
@@ -68,37 +53,35 @@ export default function Home({ session }) {
     };
   });
   const lines = busLines.concat(metroLines);
+
   const [sortedMethod, setSortedMethod] = useState('asc');
   const [filtered, setFiltered] = useState(lines);
-  const [searchParam, setSearchParam] = useState('');
 
   const toggleSort = () => {
     if (sortedMethod === 'asc') {
       setSortedMethod('dsc');
+      setFiltered(filtered.sort(asc));
     } else {
       setSortedMethod('asc');
+      setFiltered(filtered.sort(dsc));
     }
   };
 
-  useEffect(() => {
+  const handlerSearch = (e) => {
     if (sortedMethod === 'asc') {
       setFiltered(
-        filtered
-          .sort(asc)
-          .filter((item) =>
-            item.name.toLowerCase().includes(searchParam.toLowerCase())
-          )
+        lines.filter((item) =>
+          item.name.toLowerCase().includes(e.target.value.toLowerCase())
+        )
       );
     } else if (sortedMethod === 'dsc') {
       setFiltered(
-        filtered
-          .sort(dsc)
-          .filter((item) =>
-            item.name.toLowerCase().includes(searchParam.toLowerCase())
-          )
+        lines.filter((item) =>
+          item.name.toLowerCase().includes(e.target.value.toLowerCase())
+        )
       );
     }
-  }, [searchParam, sortedMethod]);
+  };
 
   if (!session) return <SignIn />;
   if (loading) return <h5>Loading...</h5>;
@@ -106,49 +89,18 @@ export default function Home({ session }) {
   return (
     <>
       <PageHead title="TMB - Search" description="" keywords="" />
-      <Main>
-        <div className="search">
-          <SortButton darkModeActive={darkModeActive} onClick={toggleSort}>
-            {sortedMethod === 'asc' ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill={
-                    darkModeActive
-                      ? lightTheme.bg.primary
-                      : darkTheme.bg.primary
-                  }
-                  d="M6 2l-6 8h4v12h4v-12h4l-6-8zm11.694.003h2.525l3.781 10.997h-2.421l-.705-2.261h-3.935l-.723 2.261h-2.336l3.814-10.997zm-.147 6.841h2.736l-1.35-4.326-1.386 4.326zm-.951 11.922l3.578-4.526h-3.487v-1.24h5.304v1.173l-3.624 4.593h3.633v1.234h-5.404v-1.234z"
-                />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill={
-                    darkModeActive
-                      ? lightTheme.bg.primary
-                      : darkTheme.bg.primary
-                  }
-                  d="M6 22l6-8h-4v-12h-4v12h-4l6 8zm11.694-19.997h2.525l3.781 10.997h-2.421l-.705-2.261h-3.935l-.723 2.261h-2.336l3.814-10.997zm-.147 6.841h2.736l-1.35-4.326-1.386 4.326zm-.951 11.922l3.578-4.526h-3.487v-1.24h5.304v1.173l-3.624 4.593h3.633v1.234h-5.404v-1.234z"
-                />
-              </svg>
-            )}
-          </SortButton>
-          <SearchBar
-            onChange={(e) => setSearchParam(e.target.value)}
-            placeholder="Search for line or station"
-          />
-        </div>
-        <List data={filtered} pathname={pathname} />
+      <SortAndFilter
+        handlerSearch={handlerSearch}
+        toggleSort={toggleSort}
+        sortedMethod={sortedMethod}
+        placeholder="Search for metro or bus line"
+      />
+      <Main darkModeActive={darkModeActive}>
+        {filtered.length > 0 ? (
+          <List data={filtered} pathname={pathname} />
+        ) : (
+          <div className="no-data">No lines found!</div>
+        )}
       </Main>
     </>
   );

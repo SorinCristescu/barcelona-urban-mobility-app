@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useDarkMode } from 'next-dark-mode';
-
 import { Container } from './style';
 
 function SearchBar({ onChange, placeholder }) {

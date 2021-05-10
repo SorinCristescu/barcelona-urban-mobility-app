@@ -2,11 +2,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import 'react-map-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  getProfile,
-  addFavorite,
-  deletedFavorite,
-} from '../../store/profile/actions';
+import { addFavorite, deletedFavorite } from '../../store/profile/actions';
 import ReactMapGl, {
   Marker,
   Popup,
@@ -53,6 +49,8 @@ function Map({ markers, showOnMap }) {
   });
 
   const [selectedMarker, setSelectedMarker] = useState(null);
+  // const [isSelected, setIsSelected] = useState(selectedMarker.isFavorite);
+  console.log('selectedMArker', selectedMarker?.isFavorite);
 
   const idFavorites = new Set(profile?.favorites.map((o) => o.id));
 
@@ -60,12 +58,13 @@ function Map({ markers, showOnMap }) {
     ...o,
     isFavorite: idFavorites.has(o.id) ? true : false,
   }));
-
-  console.log('augmentedMarkers', augmentedMarkers);
+  console.log('markers', augmentedMarkers);
+  console.log('profile', profile);
 
   const handleFavorite = (selectedMarker) => {
     console.log('selectedMarker', selectedMarker);
     if (!selectedMarker.isFavorite) {
+      console.log('to be added', selectedMarker);
       const markerToBeAdded = {
         ...selectedMarker,
         isFavorite: true,
@@ -76,6 +75,7 @@ function Map({ markers, showOnMap }) {
       };
       dispatch(addFavorite(favorite));
     } else if (selectedMarker.isFavorite) {
+      console.log('to delete', selectedMarker);
       const favorite = {
         profileId: profile?._id,
         favoriteId: selectedMarker.id,
@@ -216,11 +216,11 @@ function Map({ markers, showOnMap }) {
             className="popup"
             latitude={selectedMarker.coordinates.latitude}
             longitude={selectedMarker.coordinates.longitude}
-            // onClose={() => setSelectedMarker(null)}
+            onClose={() => setSelectedMarker(null)}
             dynamicPosition
             offsetLeft={13}
             offsetTop={15}
-            captureClick
+            // captureClick
           >
             <>
               <div className="favorite">
