@@ -1,5 +1,5 @@
 {
-  "name": "barcelona-urban-mobility-app",
+  "name": "asigurari-de-acasa",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,25 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
-    "@apollo/client": "^3.3.16",
-    "axios": "^0.21.1",
-    "graphql": "^15.5.0",
-    "mongoose": "^5.12.7",
+    "@brainhubeu/react-carousel": "^2.0.3",
     "next": "^10.0.7",
     "next-auth": "^3.20.1",
     "next-dark-mode": "^3.0.0",
     "prop-types": "^15.7.2",
     "react": "17.0.2",
-    "react-device-detect": "^1.17.0",
     "react-dom": "17.0.2",
-    "react-map-gl": "^6.1.13",
-    "react-map-gl-geocoder": "^2.1.6",
-    "react-redux": "^7.2.4",
-    "redux": "^4.1.0",
-    "redux-devtools-extension": "^2.13.9",
-    "redux-thunk": "^2.3.0",
-    "styled-components": "^5.2.3",
-    "swr": "^0.5.6"
+    "styled-components": "^5.2.3"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.12.0"

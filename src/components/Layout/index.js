@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import Header from '../Header';
-import { Container } from '../../styles';
+import Footer from '../Footer';
+import ScrollNavigation from '../ScrollNavigation';
+import { Container } from '../../css';
 import { useDarkMode } from 'next-dark-mode';
 
 function Layout({ children }) {
@@ -8,7 +10,9 @@ function Layout({ children }) {
   return (
     <Container darkModeActive={darkModeActive}>
       <Header />
+      <ScrollNavigation />
       {children}
+      <Footer darkModeActive={darkModeActive} />
     </Container>
   );
 }
